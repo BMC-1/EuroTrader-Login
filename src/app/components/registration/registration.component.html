@@ -1,0 +1,59 @@
+<!-- registration.component.html -->
+<div class="container">
+  <h2 class="text-center mb-4">Registration Form</h2>
+  <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" novalidate>
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" class="form-control" id="username" formControlName="username">
+      <div *ngIf="registrationForm.get('username')?.invalid && registrationForm.get('username')?.touched" class="text-danger">Username is required</div>
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" class="form-control" id="email" formControlName="email">
+      <div *ngIf="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched">
+        <div *ngIf="registrationForm.get('email')?.errors" class="text-danger">Invalid email format</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="role">Role</label>
+      <select class="form-control" id="role" formControlName="role">
+        <option [ngValue]="'admin'">Admin</option>
+        <option [ngValue]="'user'">User</option>
+      </select>
+      <div *ngIf="registrationForm.get('role')?.invalid && registrationForm.get('role')?.touched" class="text-danger">Role is required</div>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <div class="input-group">
+        <input type="password" class="form-control" id="password" formControlName="password" [ngClass]="{'is-invalid': registrationForm.get('password')?.invalid && (registrationForm.get('password')?.touched || registrationForm.get('password')?.value) && passwordStrength < 3}" (input)="checkPasswordStrength($event)">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordVisibility('password')">
+            <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+          </button>
+        </div>
+      </div>
+      <div *ngIf="registrationForm.get('password')?.invalid && registrationForm.get('password')?.touched" class="text-danger">Password is required</div>
+      <div *ngIf="passwordStrength" class="password-strength mt-2" [ngClass]="{'text-danger': passwordStrength < 3}">
+        Password Strength: {{ passwordStrengthText }}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="confirmPassword">Confirm Password</label>
+      <div class="input-group">
+        <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword" (input)="checkMissMatchPassword($event)">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordVisibility('confirmPassword')">
+            <i class="fa" [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+          </button>
+        </div>
+      </div>
+      <div *ngIf="registrationForm.get('confirmPassword')?.invalid && registrationForm.get('confirmPassword')?.touched" class="text-danger">Confirm Password is required</div>
+      <div *ngIf="passwordMismatch && registrationForm.get('confirmPassword')?.touched" class="text-danger">Passwords do not match</div>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block" [disabled]="loading || passwordStrength < 5 || passwordMismatch">
+      <span *ngIf="loading">Loading...</span>
+      <span *ngIf="!loading">Register</span>
+    </button>
+  </form>
+</div>
